@@ -4,7 +4,8 @@
     "user": {
       "id": "u2",
       "name": "Lukas",
-      "image": "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/lukas.jpeg"
+      "image": "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/lukas.jpeg",
+      "status": "Hey there!"
     },
     "lastMessage": {
       "id": "m1",
