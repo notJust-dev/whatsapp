@@ -4,7 +4,8 @@ If you are a beginner that wants to learn javascript and React Native, or an adv
 
 ## Tech Stack
 
-**Mobile**: React Native
+**Mobile**: React Native, Expo
+
 **Backend**: AWS Amplify
 
 ## Watch the tutorial on YouTube
