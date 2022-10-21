@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import NotImplementedScreen from "../screens/NotImplementedScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 
-import ChatsScreen from "../screens/ChatsScreen";
+import ChatsScreen from "../screens/ChatsScreen/ChatsScreen";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
