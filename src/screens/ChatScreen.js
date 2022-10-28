@@ -11,12 +11,13 @@ import Message from "../components/Message";
 import InputBox from "../components/InputBox";
 
 import bg from "../../assets/images/BG.png";
-import messages from "../../assets/data/messages.json";
 import { API, graphqlOperation } from "aws-amplify";
 import { getChatRoom } from "../graphql/queries";
+import { onCreateMessage } from "../graphql/subscriptions";
 
 const ChatScreen = () => {
   const [chatRoom, setChatRoom] = useState(null);
+  const [messages, setMessages] = useState([]);
 
   const route = useRoute();
   const navigation = useNavigation();
@@ -25,9 +26,27 @@ const ChatScreen = () => {
 
   useEffect(() => {
     API.graphql(graphqlOperation(getChatRoom, { id: chatroomID })).then(
-      (result) => setChatRoom(result.data?.getChatRoom)
+      (result) => {
+        setChatRoom(result.data?.getChatRoom);
+        setMessages(result.data?.getChatRoom?.Messages?.items);
+      }
     );
-  }, []);
+
+    // Subscribe to creation of Messages
+    const subscription = API.graphql(
+      graphqlOperation(onCreateMessage, {
+        filter: { chatroomID: { eq: chatroomID } },
+      })
+    ).subscribe({
+      next: ({ value }) => {
+        setMessages((m) => [value.data.onCreateMessage, ...m]);
+      },
+      error: (error) => console.warn(error),
+    });
+
+    // Stop receiving data updates from the subscription
+    return () => subscription.unsubscribe();
+  }, [chatroomID]);
 
   useEffect(() => {
     navigation.setOptions({ title: route.params.name });
@@ -37,8 +56,6 @@ const ChatScreen = () => {
     return <ActivityIndicator />;
   }
 
-  console.log(chatRoom.Messages.items);
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -47,7 +64,7 @@ const ChatScreen = () => {
     >
       <ImageBackground source={bg} style={styles.bg}>
         <FlatList
-          data={chatRoom.Messages.items}
+          data={messages}
           renderItem={({ item }) => <Message message={item} />}
           style={styles.list}
           inverted
