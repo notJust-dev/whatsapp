@@ -6,6 +6,7 @@ export const listChatRooms = /* GraphQL */ `
         items {
           chatRoom {
             id
+            updatedAt
             users {
               items {
                 user {

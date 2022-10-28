@@ -13,3 +13,6 @@ projects:
         region: eu-west-1
         apiId: null
         maxDepth: 3
+extensions:
+  amplify:
+    version: 3
