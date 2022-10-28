@@ -3,11 +3,11 @@ import { ModelInit, MutableModel } from "@aws-amplify/datastore";
 import { LazyLoading, LazyLoadingDisabled, AsyncCollection, AsyncItem } from "@aws-amplify/datastore";
 
 type ChatRoomMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
+  readOnlyFields: 'createdAt';
 }
 
 type MessageMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
+  readOnlyFields: 'updatedAt';
 }
 
 type UserMetaData = {
@@ -20,21 +20,21 @@ type UserChatRoomMetaData = {
 
 type EagerChatRoom = {
   readonly id: string;
+  readonly updatedAt: string;
   readonly Messages?: (Message | null)[] | null;
   readonly users?: (UserChatRoom | null)[] | null;
   readonly LastMessage?: Message | null;
   readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
   readonly chatRoomLastMessageId?: string | null;
 }
 
 type LazyChatRoom = {
   readonly id: string;
+  readonly updatedAt: string;
   readonly Messages: AsyncCollection<Message>;
   readonly users: AsyncCollection<UserChatRoom>;
   readonly LastMessage: AsyncItem<Message | undefined>;
   readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
   readonly chatRoomLastMessageId?: string | null;
 }
 
@@ -46,19 +46,19 @@ export declare const ChatRoom: (new (init: ModelInit<ChatRoom, ChatRoomMetaData>
 
 type EagerMessage = {
   readonly id: string;
+  readonly createdAt: string;
   readonly text: string;
   readonly chatroomID: string;
   readonly userID: string;
-  readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
 type LazyMessage = {
   readonly id: string;
+  readonly createdAt: string;
   readonly text: string;
   readonly chatroomID: string;
   readonly userID: string;
-  readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 

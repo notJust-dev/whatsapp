@@ -12,7 +12,7 @@ import InputBox from "../components/InputBox";
 
 import bg from "../../assets/images/BG.png";
 import { API, graphqlOperation } from "aws-amplify";
-import { getChatRoom } from "../graphql/queries";
+import { getChatRoom, listMessagesByChatRoom } from "../graphql/queries";
 import { onCreateMessage } from "../graphql/subscriptions";
 
 const ChatScreen = () => {
@@ -28,9 +28,17 @@ const ChatScreen = () => {
     API.graphql(graphqlOperation(getChatRoom, { id: chatroomID })).then(
       (result) => {
         setChatRoom(result.data?.getChatRoom);
-        setMessages(result.data?.getChatRoom?.Messages?.items);
       }
     );
+
+    API.graphql(
+      graphqlOperation(listMessagesByChatRoom, {
+        chatroomID,
+        sortDirection: "DESC",
+      })
+    ).then((result) => {
+      setMessages(result.data?.listMessagesByChatRoom?.items);
+    });
 
     // Subscribe to creation of Messages
     const subscription = API.graphql(
