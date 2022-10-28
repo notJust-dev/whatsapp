@@ -25,7 +25,6 @@ const ContactsScreen = () => {
     // Check if we already have a ChatRoom with user
     const existingChatRoom = await getCommonChatRoomWithUser(user.id);
     if (existingChatRoom) {
-      console.log(existingChatRoom);
       navigation.navigate("Chat", { id: existingChatRoom.chatRoom.id });
       return;
     }

@@ -57,7 +57,7 @@ const ChatListItem = ({ chat }) => {
       <View style={styles.content}>
         <View style={styles.row}>
           <Text style={styles.name} numberOfLines={1}>
-            {user?.name}
+            {chatRoom.name || user?.name}
           </Text>
 
           {chatRoom.LastMessage && (
