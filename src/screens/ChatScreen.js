@@ -48,6 +48,7 @@ const ChatScreen = () => {
 
   // fetch Messages
   useEffect(() => {
+    console.log("fetch message fir ", chatroomID);
     API.graphql(
       graphqlOperation(listMessagesByChatRoom, {
         chatroomID,
