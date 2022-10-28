@@ -24,7 +24,6 @@ const ContactListItem = ({ user }) => {
     const newChatRoomData = await API.graphql(
       graphqlOperation(createChatRoom, { input: {} })
     );
-    console.log(newChatRoomData);
     if (!newChatRoomData.data?.createChatRoom) {
       console.log("Error creating the chat error");
     }
