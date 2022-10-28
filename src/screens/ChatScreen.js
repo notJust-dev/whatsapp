@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
+import { Feather } from "@expo/vector-icons";
 import Message from "../components/Message";
 import InputBox from "../components/InputBox";
 
@@ -76,7 +77,17 @@ const ChatScreen = () => {
   }, [chatroomID]);
 
   useEffect(() => {
-    navigation.setOptions({ title: route.params.name });
+    navigation.setOptions({
+      title: route.params.name,
+      headerRight: () => (
+        <Feather
+          onPress={() => navigation.navigate("Group Info", { id: chatroomID })}
+          name="more-horizontal"
+          size={24}
+          color="gray"
+        />
+      ),
+    });
   }, [route.params.name]);
 
   if (!chatRoom) {
