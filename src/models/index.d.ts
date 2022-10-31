@@ -5,7 +5,7 @@ type ChatRoomMetaData = {
 }
 
 type MessageMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
+  readOnlyFields: 'updatedAt';
 }
 
 type UserMetaData = {
@@ -18,6 +18,8 @@ type UserChatRoomMetaData = {
 
 export declare class ChatRoom {
   readonly id: string;
+  readonly name?: string | null;
+  readonly image?: string | null;
   readonly Messages?: (Message | null)[] | null;
   readonly users?: (UserChatRoom | null)[] | null;
   readonly LastMessage?: Message | null;
@@ -30,10 +32,10 @@ export declare class ChatRoom {
 
 export declare class Message {
   readonly id: string;
+  readonly createdAt: string;
   readonly text: string;
   readonly chatroomID: string;
   readonly userID: string;
-  readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   constructor(init: ModelInit<Message, MessageMetaData>);
   static copyOf(source: Message, mutator: (draft: MutableModel<Message, MessageMetaData>) => MutableModel<Message, MessageMetaData> | void): Message;
