@@ -14,7 +14,11 @@ import bg from "../../../assets/images/BG.png";
 import { API, graphqlOperation } from "aws-amplify";
 import { getChatRoom } from "../../graphql/queries";
 import { listMessagesByChatRoom } from "./ChatScreenQueries";
-import { onCreateMessage, onUpdateChatRoom } from "../../graphql/subscriptions";
+import {
+  onCreateAttachment,
+  onCreateMessage,
+  onUpdateChatRoom,
+} from "../../graphql/subscriptions";
 import { Feather } from "@expo/vector-icons";
 
 const ChatScreen = () => {
@@ -70,7 +74,38 @@ const ChatScreen = () => {
       error: (err) => console.warn(err),
     });
 
-    return () => subscription.unsubscribe();
+    // Subscribe to new attachments
+    const subscriptionAttachments = API.graphql(
+      graphqlOperation(onCreateAttachment, {
+        filter: { chatroomID: { eq: chatroomID } },
+      })
+    ).subscribe({
+      next: ({ value }) => {
+        const newAttachment = value.data.onCreateAttachment;
+        setMessages((existingMessages) => {
+          const messageToUpdate = existingMessages.find(
+            (em) => em.id === newAttachment.messageID
+          );
+          if (!messageToUpdate) {
+            return existingMessages;
+          }
+          if (!messageToUpdate?.Attachments?.items) {
+            messageToUpdate.Attachments.items = [];
+          }
+          messageToUpdate.Attachments.items.push(newAttachment);
+
+          return existingMessages.map((m) =>
+            m.id === messageToUpdate.id ? messageToUpdate : m
+          );
+        });
+      },
+      error: (err) => console.warn(err),
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      subscriptionAttachments.unsubscribe();
+    };
   }, [chatroomID]);
 
   useEffect(() => {

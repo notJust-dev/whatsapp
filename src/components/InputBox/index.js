@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { View, StyleSheet, TextInput, Image, FlatList } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  Image,
+  FlatList,
+  Text,
+} from "react-native";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API, graphqlOperation, Auth, Storage } from "aws-amplify";
@@ -16,6 +23,7 @@ import { v4 as uuidv4 } from "uuid";
 const InputBox = ({ chatroom }) => {
   const [text, setText] = useState("");
   const [files, setFiles] = useState([]);
+  const [progresses, setProgresses] = useState({});
 
   const onSend = async () => {
     const authUser = await Auth.currentAuthenticatedUser();
@@ -97,6 +105,13 @@ const InputBox = ({ chatroom }) => {
 
       await Storage.put(key, blob, {
         contentType: "image/png", // contentType is optional
+        progressCallback: (progress) => {
+          console.log(`Uploaded: ${progress.loaded}/${progress.total}`);
+          setProgresses((p) => ({
+            ...p,
+            [fileUri]: progress.loaded / progress.total,
+          }));
+        },
       });
       return key;
     } catch (err) {
@@ -118,6 +133,23 @@ const InputBox = ({ chatroom }) => {
                   style={styles.selectedImage}
                   resizeMode="contain"
                 />
+
+                {progresses[item.uri] && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      backgroundColor: "#8c8c8cAA",
+                      padding: 5,
+                      borderRadius: 50,
+                    }}
+                  >
+                    <Text style={{ color: "white", fontWeight: "bold" }}>
+                      {(progresses[item.uri] * 100).toFixed(0)} %
+                    </Text>
+                  </View>
+                )}
 
                 <MaterialIcons
                   name="highlight-remove"

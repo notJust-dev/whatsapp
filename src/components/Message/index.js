@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
-import { Auth, Storage } from "aws-amplify";
+import { Auth, JS, Storage } from "aws-amplify";
 import { useEffect, useState } from "react";
 import ImageAttachments from "./ImageAttachments";
 import VideoAttachments from "./VideoAttachments";
@@ -39,7 +39,7 @@ const Message = ({ message }) => {
       }
     };
     downloadAttachments();
-  }, [message.Attachments.items]);
+  }, [JSON.stringify(message.Attachments.items)]);
 
   const imageContainerWidth = width * 0.8 - 30;
 
