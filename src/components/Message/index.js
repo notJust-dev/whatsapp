@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Pressable,
+  useWindowDimensions,
+} from "react-native";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
@@ -10,6 +17,7 @@ const Message = ({ message }) => {
   const [isMe, setIsMe] = useState(false);
   const [imageSources, setImageSources] = useState([]);
   const [imageViewerVisible, setImageViewerVisible] = useState(false);
+  const { width } = useWindowDimensions();
 
   useEffect(() => {
     const isMyMessage = async () => {
@@ -43,10 +51,20 @@ const Message = ({ message }) => {
       ]}
     >
       {imageSources?.length > 0 && (
-        <>
-          <Pressable onPress={() => setImageViewerVisible(true)}>
-            <Image source={imageSources[0]} style={styles.image} />
-          </Pressable>
+        <View style={{ width: width * 0.8 - 30 }}>
+          <View style={styles.images}>
+            {imageSources.map((imgSource) => (
+              <Pressable
+                onPress={() => setImageViewerVisible(true)}
+                style={[
+                  styles.imageContainer,
+                  imageSources.length === 1 && { flex: 1 },
+                ]}
+              >
+                <Image source={imgSource} style={styles.image} />
+              </Pressable>
+            ))}
+          </View>
 
           <ImageView
             images={imageSources}
@@ -54,7 +72,7 @@ const Message = ({ message }) => {
             visible={imageViewerVisible}
             onRequestClose={() => setImageViewerVisible(false)}
           />
-        </>
+        </View>
       )}
       <Text>{message.text}</Text>
       <Text style={styles.time}>{dayjs(message.createdAt).fromNow(true)}</Text>
@@ -84,11 +102,18 @@ const styles = StyleSheet.create({
     color: "gray",
     alignSelf: "flex-end",
   },
-  image: {
-    width: 200,
-    height: 100,
+  images: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  imageContainer: {
+    width: "45%",
     borderColor: "white",
-    borderWidth: 2,
+    margin: 2,
+  },
+  image: {
+    flex: 1,
+    aspectRatio: 1,
     borderRadius: 5,
   },
 });
