@@ -1,22 +1,14 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Pressable,
-  useWindowDimensions,
-} from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 import { Auth, Storage } from "aws-amplify";
 import { useEffect, useState } from "react";
-import { S3Image } from "aws-amplify-react-native";
-import ImageView from "react-native-image-viewing";
+import ImageAttachments from "./ImageAttachments";
+import VideoAttachments from "./VideoAttachments";
 
 const Message = ({ message }) => {
   const [isMe, setIsMe] = useState(false);
-  const [imageViewerVisible, setImageViewerVisible] = useState(false);
   const [downloadAttachments, setDownloadedAttachments] = useState([]);
 
   const { width } = useWindowDimensions();
@@ -51,6 +43,13 @@ const Message = ({ message }) => {
 
   const imageContainerWidth = width * 0.8 - 30;
 
+  const imageAttachments = downloadAttachments.filter(
+    (at) => at.type === "IMAGE"
+  );
+  const videoAttachments = downloadAttachments.filter(
+    (at) => at.type === "VIDEO"
+  );
+
   return (
     <View
       style={[
@@ -63,23 +62,11 @@ const Message = ({ message }) => {
     >
       {downloadAttachments.length > 0 && (
         <View style={[{ width: imageContainerWidth }, styles.images]}>
-          {downloadAttachments.map((imageSource) => (
-            <Pressable
-              style={[
-                styles.imageContainer,
-                downloadAttachments.length === 1 && { flex: 1 },
-              ]}
-              onPress={() => setImageViewerVisible(true)}
-            >
-              <Image source={{ uri: imageSource.uri }} style={styles.image} />
-            </Pressable>
-          ))}
+          <ImageAttachments attachments={imageAttachments} />
 
-          <ImageView
-            images={downloadAttachments.map(({ uri }) => ({ uri }))}
-            imageIndex={0}
-            visible={imageViewerVisible}
-            onRequestClose={() => setImageViewerVisible(false)}
+          <VideoAttachments
+            attachments={videoAttachments}
+            width={imageContainerWidth}
           />
         </View>
       )}
