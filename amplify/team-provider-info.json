@@ -19,5 +19,29 @@
         "Whatsapp": {}
       }
     }
+  },
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-whatsapp-dev-104309-authRole",
+      "UnauthRoleArn": "arn:aws:iam::704219588443:role/amplify-whatsapp-dev-104309-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::704219588443:role/amplify-whatsapp-dev-104309-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-whatsapp-dev-104309-deployment",
+      "UnauthRoleName": "amplify-whatsapp-dev-104309-unauthRole",
+      "StackName": "amplify-whatsapp-dev-104309",
+      "StackId": "arn:aws:cloudformation:eu-west-1:704219588443:stack/amplify-whatsapp-dev-104309/805d5f40-5c2d-11ed-ab96-06a4cda78e83",
+      "AmplifyAppId": "d1cglyox6qumdc"
+    },
+    "categories": {
+      "auth": {
+        "Whatsapp": {}
+      },
+      "api": {
+        "Whatsapp": {}
+      },
+      "storage": {
+        "s3whatsappstoragee6ad73c0": {}
+      }
+    }
   }
 }

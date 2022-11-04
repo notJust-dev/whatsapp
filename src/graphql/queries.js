@@ -14,6 +14,7 @@ export const getChatRoom = /* GraphQL */ `
           text
           chatroomID
           userID
+          images
           updatedAt
           _version
           _deleted
@@ -42,6 +43,7 @@ export const getChatRoom = /* GraphQL */ `
         text
         chatroomID
         userID
+        images
         updatedAt
         _version
         _deleted
@@ -81,6 +83,7 @@ export const listChatRooms = /* GraphQL */ `
           text
           chatroomID
           userID
+          images
           updatedAt
           _version
           _deleted
@@ -129,6 +132,7 @@ export const syncChatRooms = /* GraphQL */ `
           text
           chatroomID
           userID
+          images
           updatedAt
           _version
           _deleted
@@ -154,6 +158,7 @@ export const getMessage = /* GraphQL */ `
       text
       chatroomID
       userID
+      images
       updatedAt
       _version
       _deleted
@@ -174,6 +179,7 @@ export const listMessages = /* GraphQL */ `
         text
         chatroomID
         userID
+        images
         updatedAt
         _version
         _deleted
@@ -203,6 +209,7 @@ export const syncMessages = /* GraphQL */ `
         text
         chatroomID
         userID
+        images
         updatedAt
         _version
         _deleted
@@ -236,6 +243,7 @@ export const listMessagesByChatRoom = /* GraphQL */ `
         text
         chatroomID
         userID
+        images
         updatedAt
         _version
         _deleted
@@ -260,6 +268,7 @@ export const getUser = /* GraphQL */ `
           text
           chatroomID
           userID
+          images
           updatedAt
           _version
           _deleted
@@ -382,6 +391,7 @@ export const getUserChatRoom = /* GraphQL */ `
           text
           chatroomID
           userID
+          images
           updatedAt
           _version
           _deleted
