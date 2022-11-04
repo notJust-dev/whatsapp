@@ -3,14 +3,18 @@ import { View, StyleSheet, TextInput, Image, FlatList } from "react-native";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API, graphqlOperation, Auth, Storage } from "aws-amplify";
-import { createMessage, updateChatRoom } from "../../graphql/mutations";
+import {
+  createMessage,
+  updateChatRoom,
+  createAttachement,
+} from "../../graphql/mutations";
 import * as ImagePicker from "expo-image-picker";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 
 const InputBox = ({ chatroom }) => {
   const [text, setText] = useState("");
-  const [images, setImages] = useState([]);
+  const [files, setFiles] = useState([]);
 
   const onSend = async () => {
     const authUser = await Auth.currentAuthenticatedUser();
@@ -21,16 +25,19 @@ const InputBox = ({ chatroom }) => {
       userID: authUser.attributes.sub,
     };
 
-    if (images) {
-      newMessage.images = await Promise.all(images.map(uploadFile));
-      setImages([]);
-    }
-
     const newMessageData = await API.graphql(
       graphqlOperation(createMessage, { input: newMessage })
     );
 
     setText("");
+
+    // add attachments
+    await Promise.all(
+      files.map((file) =>
+        addAttachment(file, newMessageData.data.createMessage.id)
+      )
+    );
+    setFiles([]);
 
     // set the new message as LastMessage of the ChatRoom
     await API.graphql(
@@ -44,6 +51,24 @@ const InputBox = ({ chatroom }) => {
     );
   };
 
+  const addAttachment = async (file, messageID) => {
+    const types = {
+      image: "IMAGE",
+      video: "VIDEO",
+    };
+    const newAttachment = {
+      storageKey: await uploadFile(file),
+      type: types[file.type],
+      width: file.width,
+      height: file.height,
+      duration: file.duration,
+      messageID,
+    };
+    return API.graphql(
+      graphqlOperation(createAttachement, { input: newAttachment })
+    );
+  };
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -52,24 +77,30 @@ const InputBox = ({ chatroom }) => {
       allowsMultipleSelection: true,
     });
 
-    console.log(result);
-
     if (!result.cancelled) {
       if (result.selected) {
-        setImages(result.selected.map((s) => s.uri));
+        setFiles(result.selected);
       } else {
-        setImages([result.uri]);
+        setFiles([result]);
       }
     }
   };
 
-  const uploadFile = async (fileUri) => {
+  const uploadFile = async ({ uri, type }) => {
+    const exts = {
+      image: "png",
+      video: "mp4",
+    };
+    const contentTypes = {
+      image: "image/png",
+      video: "video/mp4",
+    };
     try {
-      const response = await fetch(fileUri);
+      const response = await fetch(uri);
       const blob = await response.blob();
-      const key = `${uuidv4()}.png`;
+      const key = `${uuidv4()}.${exts[type]}`;
       await Storage.put(key, blob, {
-        contentType: "image/png", // contentType is optional
+        contentType: contentTypes[type], // contentType is optional
       });
       return key;
     } catch (err) {
@@ -79,21 +110,23 @@ const InputBox = ({ chatroom }) => {
 
   return (
     <>
-      {images.length > 0 && (
+      {files.length > 0 && (
         <View style={styles.attachmentsContainer}>
           <FlatList
-            data={images}
+            data={files}
             renderItem={({ item }) => (
               <>
                 <Image
-                  source={{ uri: item }}
+                  source={{ uri: item.uri }}
                   style={styles.selectedImage}
                   resizeMode="contain"
                 />
                 <MaterialIcons
                   name="highlight-remove"
                   onPress={() =>
-                    setImages((imgs) => [...imgs].filter((img) => img !== item))
+                    setFiles((existingFiles) =>
+                      [...existingFiles].filter((file) => file !== item)
+                    )
                   }
                   size={20}
                   color="gray"

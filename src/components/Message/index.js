@@ -12,11 +12,13 @@ dayjs.extend(relativeTime);
 import { Auth, Storage } from "aws-amplify";
 import { useEffect, useState } from "react";
 import ImageView from "react-native-image-viewing";
+import { Video } from "expo-av";
 
 const Message = ({ message }) => {
   const [isMe, setIsMe] = useState(false);
   const [imageSources, setImageSources] = useState([]);
   const [imageViewerVisible, setImageViewerVisible] = useState(false);
+  const [downloadAttachements, setDownloadedAttachements] = useState([]);
   const { width } = useWindowDimensions();
 
   useEffect(() => {
@@ -30,16 +32,25 @@ const Message = ({ message }) => {
   }, []);
 
   useEffect(() => {
-    const downloadImages = async () => {
-      if (message.images) {
-        const imageUrls = await Promise.all(message.images.map(Storage.get));
+    const downloadAttachements = async () => {
+      if (message.Attachements.items) {
+        const downloadedAttachments = await Promise.all(
+          message.Attachements.items.map((attachment) =>
+            Storage.get(attachment.storageKey).then((uri) => ({
+              ...attachment,
+              uri,
+            }))
+          )
+        );
 
-        setImageSources(imageUrls.map((uri) => ({ uri })));
+        setDownloadedAttachements(downloadedAttachments);
       }
     };
-    downloadImages();
-  }, [message.images]);
+    downloadAttachements();
+  }, [message.Attachements.items]);
 
+  // console.log(downloadAttachements);
+  const maxContainerWidth = width * 0.8 - 30;
   return (
     <View
       style={[
@@ -50,20 +61,41 @@ const Message = ({ message }) => {
         },
       ]}
     >
-      {imageSources?.length > 0 && (
-        <View style={{ width: width * 0.8 - 30 }}>
+      {downloadAttachements?.length > 0 && (
+        <View style={{ width: maxContainerWidth }}>
           <View style={styles.images}>
-            {imageSources.map((imgSource) => (
-              <Pressable
-                onPress={() => setImageViewerVisible(true)}
-                style={[
-                  styles.imageContainer,
-                  imageSources.length === 1 && { flex: 1 },
-                ]}
-              >
-                <Image source={imgSource} style={styles.image} />
-              </Pressable>
-            ))}
+            {downloadAttachements.map((attachment) =>
+              attachment.type === "IMAGE" ? (
+                <Pressable
+                  key={attachment.id}
+                  onPress={() => setImageViewerVisible(true)}
+                  style={[
+                    styles.imageContainer,
+                    downloadAttachements.length === 1 && { flex: 1 },
+                  ]}
+                >
+                  <Image
+                    source={{ uri: attachment.uri }}
+                    style={styles.image}
+                  />
+                </Pressable>
+              ) : (
+                <Video
+                  useNativeControls
+                  source={{
+                    uri: attachment.uri,
+                  }}
+                  shouldPlay={false}
+                  style={{
+                    width: maxContainerWidth,
+                    height:
+                      (attachment.height * maxContainerWidth) /
+                      attachment.width,
+                  }}
+                  resizeMode="contain"
+                />
+              )
+            )}
           </View>
 
           <ImageView

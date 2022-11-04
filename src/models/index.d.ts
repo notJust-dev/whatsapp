@@ -1,5 +1,14 @@
 import { ModelInit, MutableModel } from "@aws-amplify/datastore";
 
+export enum AttachmentType {
+  IMAGE = "IMAGE",
+  VIDEO = "VIDEO"
+}
+
+type AttachementMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
 type ChatRoomMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -14,6 +23,20 @@ type UserMetaData = {
 
 type UserChatRoomMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
+export declare class Attachement {
+  readonly id: string;
+  readonly storageKey?: string | null;
+  readonly type?: AttachmentType | keyof typeof AttachmentType | null;
+  readonly width?: number | null;
+  readonly height?: number | null;
+  readonly duration?: number | null;
+  readonly messageID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+  constructor(init: ModelInit<Attachement, AttachementMetaData>);
+  static copyOf(source: Attachement, mutator: (draft: MutableModel<Attachement, AttachementMetaData>) => MutableModel<Attachement, AttachementMetaData> | void): Attachement;
 }
 
 export declare class ChatRoom {
@@ -37,6 +60,7 @@ export declare class Message {
   readonly chatroomID: string;
   readonly userID: string;
   readonly images?: (string | null)[] | null;
+  readonly Attachements?: (Attachement | null)[] | null;
   readonly updatedAt?: string | null;
   constructor(init: ModelInit<Message, MessageMetaData>);
   static copyOf(source: Message, mutator: (draft: MutableModel<Message, MessageMetaData>) => MutableModel<Message, MessageMetaData> | void): Message;

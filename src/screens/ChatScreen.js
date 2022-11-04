@@ -13,7 +13,9 @@ import InputBox from "../components/InputBox";
 import bg from "../../assets/images/BG.png";
 import messages from "../../assets/data/messages.json";
 import { API, graphqlOperation } from "aws-amplify";
-import { getChatRoom, listMessagesByChatRoom } from "../graphql/queries";
+import { getChatRoom } from "../graphql/queries";
+import { listMessagesByChatRoom } from "./ChatQueries";
+
 import { onCreateMessage, onUpdateChatRoom } from "../graphql/subscriptions";
 import { Feather } from "@expo/vector-icons";
 

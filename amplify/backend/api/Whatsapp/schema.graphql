@@ -1,3 +1,18 @@
+enum AttachmentType {
+  IMAGE
+  VIDEO
+}
+
+type Attachement @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  storageKey: String
+  type: AttachmentType
+  width: Int
+  height: Int
+  duration: Int
+  messageID: ID! @index(name: "byMessage")
+}
+
 type ChatRoom @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String
@@ -14,6 +29,7 @@ type Message @model @auth(rules: [{allow: public}]) {
   chatroomID: ID! @index(name: "byChatRoom", sortKeyFields: ["createdAt"], queryField: "listMessagesByChatRoom")
   userID: ID! @index(name: "byUser")
   images: [String]
+  Attachements: [Attachement] @hasMany(indexName: "byMessage", fields: ["id"])
 }
 
 type User @model @auth(rules: [{allow: public}]) {
