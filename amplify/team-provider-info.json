@@ -17,6 +17,9 @@
       },
       "api": {
         "Whatsapp": {}
+      },
+      "storage": {
+        "s3whatsappstoragecf31e950": {}
       }
     }
   },
