@@ -19,5 +19,12 @@
         "Whatsapp": {}
       }
     }
+  },
+  "dev": {
+    "categories": {
+      "auth": {
+        "Whatsapp": {}
+      }
+    }
   }
 }

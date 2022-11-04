@@ -47,5 +47,12 @@
         }
       }
     }
+  },
+  "storage": {
+    "s3whatsappstoragecf31e950": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": []
+    }
   }
 }

@@ -36,6 +36,7 @@ export declare class Message {
   readonly text: string;
   readonly chatroomID: string;
   readonly userID: string;
+  readonly images?: (string | null)[] | null;
   readonly updatedAt?: string | null;
   constructor(init: ModelInit<Message, MessageMetaData>);
   static copyOf(source: Message, mutator: (draft: MutableModel<Message, MessageMetaData>) => MutableModel<Message, MessageMetaData> | void): Message;
